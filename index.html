@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>知播鱼小鱼打字</title>
+    <link rel="stylesheet" href="CSS/index.css">
+</head>
+<body>
+<img src="images/play.png" alt="图片丢失">
+<!--默认情况下谷歌浏览器默认情况下不允许自动播放音乐,只能在用户和网页交互后才能播放-->
+<audio src="media/bg.ogg" loop autoplay></audio>
+<script>
+    let oImg=document.querySelector("img");
+    let oAudio=document.querySelector("audio");
+    let list=[];//定义一个数组保存我们所有的对象
+    oImg.onclick=function (){
+        oImg.parentNode.removeChild(oImg);
+        oAudio.play();
+        setInterval(function (){
+            let start=new Specter();
+            start.fly();
+            list.push(start);
+        },2000);
+
+    }
+    class Specter{
+        constructor() {
+            let oDiv=document.createElement("div");
+            oDiv.style.top="1000px";
+            oDiv.style.left=Math.random()*1500+"px";
+            let oSpan=document.createElement("span");
+            // oSpan.innerText="m";
+            let key1=this.generateKey();
+            oSpan.innerText=key1;
+            oDiv.className="specter "+key1;
+            oDiv.appendChild(oSpan);
+            document.body.appendChild(oDiv);
+            this.oDiv=oDiv;//把这个oDiv保存为Specter的属性
+        }
+        fly(){
+            let offset=parseInt(this.oDiv.style.top);
+            this.timer=setInterval( () => {
+                offset -= 20;
+                if (offset<=-300){
+                    this.bomb();
+                }
+                this.oDiv.style.top=offset+"px";
+            },200);
+
+        }
+        bomb(){
+            document.body.removeChild(this.oDiv);
+            clearInterval(this.timer);
+
+       }
+       generateKey(){
+           let num=Math.floor(Math.random() * (90 - 65 + 1) + 65);
+           return String.fromCharCode(num);
+       }
+    }
+    document.body.onkeydown=function (event){
+        let key=event.key.toUpperCase();
+        let oDiv1=document.querySelector("."+key);
+        //根据div找到这个div对应的鬼魂对象在我们数组中的位置
+        let currentIndex=list.findIndex(function (currentValue){
+            return currentValue.oDiv===oDiv1;
+        });
+        if (currentIndex===-1) return;
+        //根据位置取出对应的鬼魂对象
+        let currentSpecter=list[currentIndex];
+        currentSpecter.bomb();
+        list.splice(currentIndex,1);
+    }
+   /* let num=getRandomIntInclusive(65,90);
+    let char=String.fromCharCode(num);
+    function getRandomIntInclusive(min, max) {
+        min = Math.ceil(min);
+        max = Math.floor(max);
+        return Math.floor(Math.random() * (max - min + 1) + min);
+    }
+    console.log(num);
+    console.log(char);*/
+</script>
+</body>
+</html>
